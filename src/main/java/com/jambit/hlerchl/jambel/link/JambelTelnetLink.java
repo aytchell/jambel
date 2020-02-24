@@ -1,0 +1,93 @@
+package com.jambit.hlerchl.jambel.link;
+
+import com.jambit.hlerchl.jambel.exceptions.JambelConnectException;
+import com.jambit.hlerchl.jambel.exceptions.JambelException;
+import com.jambit.hlerchl.jambel.exceptions.JambelIoException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.telnet.TelnetClient;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ConnectException;
+import java.nio.charset.StandardCharsets;
+
+@Slf4j
+public class JambelTelnetLink implements JambelCommLink {
+    private static final int RECEIVE_BUFFER_SIZE = 128;
+
+    private final String hostname;
+    private final int port;
+    private final TelnetClient telnetClient;
+    private final byte[] receiveBuffer;
+
+    public JambelTelnetLink(String hostname, int port) {
+        this.hostname = hostname;
+        this.port = port;
+        this.telnetClient = new TelnetClient();
+        receiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
+    }
+
+    @Override
+    public synchronized String sendCommand(String command) throws JambelException {
+        try {
+            telnetClient.connect(hostname, port);
+            try {
+                return sendTelnetCommand(stripTrailingCrLf(command));
+            } finally {
+                telnetClient.disconnect();
+            }
+        } catch (ConnectException connex) {
+            throw new JambelConnectException(String.format("While sending '%s'", command), connex);
+        } catch (IOException ioex) {
+            throw new JambelIoException(String.format("While sending '%s'", command), ioex);
+        }
+    }
+
+    private String sendTelnetCommand(String command) throws IOException {
+        // documentation says that we shouldn't close this stream but call disconnect()
+        final OutputStream out = telnetClient.getOutputStream();
+
+        log.debug("{}: Sending command '{}\\r\\n' ... ", hostname, command);
+        out.write((command + "\r\n").getBytes(StandardCharsets.UTF_8));
+        out.flush();
+
+        // documentation says that we shouldn't close this stream but call disconnect()
+        final InputStream in = telnetClient.getInputStream();
+        final int numBytesReceived = in.read(receiveBuffer);
+        if (numBytesReceived <= 0) {
+            log.error("{}: No response received (stream is already closed)", hostname);
+            return "";
+        } else {
+            final String response = telnetBytesToString(receiveBuffer, numBytesReceived);
+            log.debug("{}: received response '{}'", hostname, response);
+            return response;
+        }
+    }
+
+    private String stripTrailingCrLf(String command) {
+        while (command.endsWith("\r\n")) {
+            command = command.substring(0, command.length() - 3);
+        }
+
+        return command;
+    }
+
+    private String telnetBytesToString(byte[] buffer, int numBytes) {
+        if (bytesEndWithCrLf(buffer, numBytes)) {
+            return utf8BytesToString(buffer, numBytes - 2);
+        }
+        return utf8BytesToString(buffer, numBytes);
+    }
+
+    private boolean bytesEndWithCrLf(byte[] buffer, int numBytes) {
+        if (numBytes < 2) {
+            return false;
+        }
+        return (buffer[numBytes-2] == '\r') && (buffer[numBytes-1] == '\n');
+    }
+
+    private String utf8BytesToString(byte[] buffer, int numBytes) {
+        return new String(buffer, 0, numBytes, StandardCharsets.UTF_8);
+    }
+}
