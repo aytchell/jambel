@@ -1,6 +1,6 @@
 package com.jambit.hlerchl.jambel.entity;
 
-import com.jambit.hlerchl.jambel.link.JambelCommLink;
+import com.jambit.hlerchl.jambel.JambelCommLink;
 
 public class JambelRedOnTop extends RawJambel {
     public JambelRedOnTop(JambelCommLink commLink) {

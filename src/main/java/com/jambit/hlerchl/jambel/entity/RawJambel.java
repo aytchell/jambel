@@ -1,8 +1,10 @@
 package com.jambit.hlerchl.jambel.entity;
 
+import com.jambit.hlerchl.jambel.Jambel;
+import com.jambit.hlerchl.jambel.JambelModule;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
-import com.jambit.hlerchl.jambel.link.JambelCommLink;
+import com.jambit.hlerchl.jambel.JambelCommLink;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -1,6 +1,5 @@
 package com.jambit.hlerchl.jambel;
 
-import com.jambit.hlerchl.jambel.entity.Jambel;
 import com.jambit.hlerchl.jambel.entity.JambelGreenOnTop;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.link.JambelTelnetLink;

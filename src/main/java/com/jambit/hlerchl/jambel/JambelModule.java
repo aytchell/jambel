@@ -1,4 +1,4 @@
-package com.jambit.hlerchl.jambel.entity;
+package com.jambit.hlerchl.jambel;
 
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 
