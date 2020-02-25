@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -30,11 +31,15 @@ public class JambelTelnetLink implements JambelCommLink {
     @Setter
     private int msecUntilRetry = DEFAULT_MSEC_UNTIL_FIRST_RETRY;
 
-    public JambelTelnetLink(String hostname, int port) {
+    public JambelTelnetLink(TelnetClient telnetClient, String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
-        this.telnetClient = new TelnetClient();
+        this.telnetClient = telnetClient;
         receiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
+    }
+
+    public JambelTelnetLink(String hostname, int port) {
+        this(new TelnetClient(), hostname, port);
     }
 
     public void setConnectTimeout(int milliSeconds) {
@@ -45,7 +50,7 @@ public class JambelTelnetLink implements JambelCommLink {
     public synchronized String sendCommand(String command) throws JambelException {
         int attemptNr = 0;
 
-        for (;;) {
+        for (; ; ) {
             try {
                 return connectAndSend(command);
             } catch (JambelConnectException e) {
@@ -71,6 +76,9 @@ public class JambelTelnetLink implements JambelCommLink {
             }
         } catch (ConnectException connex) {
             throw new JambelConnectException(String.format("While sending '%s'", command), connex);
+        } catch (UnknownHostException uhex) {
+            throw new JambelConnectException("Unknown host. Check if '" + hostname +
+                                             "' is the correct name and if it's online");
         } catch (IOException ioex) {
             throw new JambelIoException(String.format("While sending '%s'", command), ioex);
         }
