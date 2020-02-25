@@ -2,13 +2,16 @@ package com.jambit.hlerchl.jambel.entity;
 
 import com.jambit.hlerchl.jambel.Jambel;
 import com.jambit.hlerchl.jambel.JambelCommLink;
+import com.jambit.hlerchl.jambel.exceptions.JambelConnectException;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelIoException;
+import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RawJambelTest {
 
@@ -83,6 +86,13 @@ class RawJambelTest {
     }
 
     @Test
+    void letRedFlash() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,flash");
+
+        fixture.red().flash();
+    }
+
+    @Test
     void letRedBlinkInvers() throws JambelException {
         Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,blink_invers");
 
@@ -102,5 +112,39 @@ class RawJambelTest {
         Mockito.doReturn("OK").when(mockedLink).sendCommand("set=3,on");
 
         inverseFixture.red().on();
+    }
+
+    @Test
+    void throwsOnUnusualAnswer() throws JambelException {
+        Mockito.doReturn("OKiDoki").when(mockedLink).sendCommand("set=1,blink");
+        Mockito.doReturn("").when(mockedLink).sendCommand("version");
+
+        assertThrows(JambelResponseException.class, () -> fixture.red().blink());
+        assertThrows(JambelResponseException.class, () -> fixture.version());
+    }
+
+    @Test
+    void throwsOnNoAnswer() throws JambelException {
+        Mockito.doReturn(null).when(mockedLink).sendCommand("set=1,on");
+        Mockito.doReturn(null).when(mockedLink).sendCommand("version");
+
+        assertThrows(JambelResponseException.class, () -> fixture.red().on());
+        assertThrows(JambelResponseException.class, () -> fixture.version());
+    }
+
+    @Test
+    void connectExceptionIsForwarded() throws JambelException {
+        Mockito.doThrow(new JambelConnectException("no connection"))
+            .when(mockedLink).sendCommand("set=1,blink");
+
+        assertThrows(JambelConnectException.class, () -> fixture.red().blink());
+    }
+
+    @Test
+    void ioExceptionIsForwarded() throws JambelException {
+        Mockito.doThrow(new JambelIoException("broken link"))
+            .when(mockedLink).sendCommand("set=1,blink");
+
+        assertThrows(JambelIoException.class, () -> fixture.red().blink());
     }
 }
