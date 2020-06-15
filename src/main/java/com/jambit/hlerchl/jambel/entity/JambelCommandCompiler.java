@@ -18,7 +18,7 @@ public class JambelCommandCompiler {
             throw new JambelCompileException("No command given");
         }
 
-        return compile(jambel, cmdParts);
+        return new DescriptiveJambelCommand(compile(jambel, cmdParts), command);
     }
 
     private static JambelCommand compile(Jambel jambel, String[] cmdParts) throws JambelCompileException {

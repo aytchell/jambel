@@ -55,7 +55,7 @@ public class JambelTelnetLink implements JambelCommLink {
                 return connectAndSend(command);
             } catch (JambelConnectException e) {
                 if (++attemptNr > numberOfConnectRetries) {
-                    throw new JambelConnectException(String.format("While sending '%s'", command), e);
+                    throw new JambelConnectException(String.format("While sending '%s': %s", command, e.getMessage()));
                 }
                 try {
                     Thread.sleep(msecUntilRetry);

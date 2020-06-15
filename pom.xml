@@ -6,9 +6,9 @@
 
     <groupId>com.jambit.hlerchl</groupId>
     <artifactId>jambel</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
-    <name>jambel Ansteuerung</name>
+    <name>jambel remote control</name>
     <description>
         This code is a kind of a 'device driver' to control the LAN-attached
         version of jambit's fast feedback device (calles "jambel").
