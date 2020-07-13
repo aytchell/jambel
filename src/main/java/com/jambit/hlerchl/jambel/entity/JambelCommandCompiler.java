@@ -71,7 +71,8 @@ public class JambelCommandCompiler {
 
             return () -> jambel.setDefaultBlinkTimes(onTimeMsec, offTimeMsec);
         } catch (Exception e) {
-            throw new JambelCompileException("Failed to parse on/off times for set_blink_times", e);
+            throw new JambelCompileException(
+                String.format("Failed to parse on/off times for set_blink_times ('%s')", e.getMessage()));
         }
     }
 
@@ -106,8 +107,8 @@ public class JambelCommandCompiler {
 
             return () -> module.setBlinkTimes(onTimeMsec, offTimeMsec);
         } catch (Exception e) {
-            throw new JambelCompileException(
-                "Failed to parse on/off times for '" + cmdParts[0] + " " + " set_blink_times'", e);
+            throw new JambelCompileException(String.format(
+                "Failed to parse on/off times for '%s set_blink_times' (%s)", cmdParts[0], e.getMessage()));
         }
     }
 }

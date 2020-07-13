@@ -75,12 +75,14 @@ public class JambelTelnetLink implements JambelCommLink {
                 telnetClient.disconnect();
             }
         } catch (ConnectException connex) {
-            throw new JambelConnectException(String.format("While sending '%s'", command), connex);
+            throw new JambelConnectException(
+                String.format("Got '%s' while sending '%s'", connex.getMessage(), command));
         } catch (UnknownHostException uhex) {
             throw new JambelConnectException("Unknown host. Check if '" + hostname +
                                              "' is the correct name and if it's online");
         } catch (IOException ioex) {
-            throw new JambelIoException(String.format("While sending '%s'", command), ioex);
+            throw new JambelIoException(
+                String.format("Got '%s' while sending '%s'", ioex.getMessage(), command));
         }
     }
 
