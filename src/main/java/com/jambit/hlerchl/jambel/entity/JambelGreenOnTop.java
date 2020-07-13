@@ -13,4 +13,11 @@ public class JambelGreenOnTop extends RawJambel {
         return new JambelGreenOnTop(
                 new JambelTelnetLink(hostAddress, port));
     }
+
+    public static Jambel build(String hostAddress, int port, int timeoutMilliSeconds) {
+        final RawJambel jambel = new JambelGreenOnTop(
+            new JambelTelnetLink(hostAddress, port));
+        jambel.setConnectTimeout(timeoutMilliSeconds);
+        return jambel;
+    }
 }

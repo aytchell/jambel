@@ -22,6 +22,10 @@ public class RawJambel implements Jambel {
         this.greenModule = new RawModule(greenModuleId);
     }
 
+    public void setConnectTimeout(int milliSeconds) {
+        commLink.setConnectTimeout(milliSeconds);
+    }
+
     @Override
     public void reset() throws JambelException {
         sendOkCommand("reset");

@@ -14,6 +14,14 @@ public class JambelFactory {
         }
     }
 
+    public static Jambel build(String hostAddress, int port, boolean redOnTop, int timeoutMilliSeconds) {
+        if (redOnTop) {
+            return JambelRedOnTop.build(hostAddress, port, timeoutMilliSeconds);
+        } else {
+            return JambelGreenOnTop.build(hostAddress, port, timeoutMilliSeconds);
+        }
+    }
+
     public static JambelCommand compileCommand(Jambel jambel, String command)
         throws JambelCompileException {
         return JambelCommandCompiler.compile(jambel, command);
