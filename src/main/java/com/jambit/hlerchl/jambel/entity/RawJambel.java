@@ -5,14 +5,18 @@ import com.jambit.hlerchl.jambel.JambelModule;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
 import com.jambit.hlerchl.jambel.JambelCommLink;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class RawJambel implements Jambel {
     private final JambelCommLink commLink;
-    private final JambelModule redModule;
-    private final JambelModule yellowModule;
-    private final JambelModule greenModule;
+    private final RawModule redModule;
+    private final RawModule yellowModule;
+    private final RawModule greenModule;
     private String version = null;
 
     public RawJambel(JambelCommLink commLink, int redModuleId, int yellowModuleId, int greenModuleId) {
@@ -34,16 +38,60 @@ public class RawJambel implements Jambel {
     @Override
     public synchronized String version() throws JambelException {
         if (version == null) {
-            final String response = commLink.sendCommand("version");
-            if (response == null) {
-                throw new JambelResponseException("Received null, expected response for 'version'");
-            }
-            if (response.isEmpty()) {
-                throw new JambelResponseException("Received empty string, expected response for 'version'");
-            }
-            version = response;
+            version = sendCommandExpectResponse("version");
         }
         return version;
+    }
+
+    @Override
+    public synchronized Status status() throws JambelException {
+        final String statusResponse = sendCommandExpectResponse("status");
+        if (!statusResponse.startsWith("status=")) {
+            throw new JambelResponseException(
+                String.format("Expected response for 'status' to start with 'status='; got '%s'",
+                    statusResponse));
+        }
+
+        return parseStatusResponse(statusResponse);
+    }
+
+    private Status parseStatusResponse(String statusResponse) throws JambelResponseException {
+        List<LightStatus> lightStatus = new ArrayList<>(3);
+        try {
+            lightStatus.add(interpretStatusId(extractModuleStatus(1, statusResponse)));
+            lightStatus.add(interpretStatusId(extractModuleStatus(2, statusResponse)));
+            lightStatus.add(interpretStatusId(extractModuleStatus(3, statusResponse)));
+        } catch (Exception e) {
+            throw new JambelResponseException(
+                String.format("Failed to parse response for 'status' (which is '%s')",
+                    statusResponse));
+        }
+
+        return new Status(
+            lightStatus.get(redModule.getModuleId() - 1),
+            lightStatus.get(yellowModule.getModuleId() - 1),
+            lightStatus.get(greenModule.getModuleId() - 1)
+        );
+    }
+
+    private LightStatus interpretStatusId(int statusId) throws Exception {
+        switch (statusId) {
+            case 0: return LightStatus.OFF;
+            case 1: return LightStatus.ON;
+            case 2: return LightStatus.BLINK;
+            case 3: return LightStatus.FLASH;
+            case 4: return LightStatus.BLINK_INVERSE;
+            default:
+                throw new Exception("Unknown status identifier");
+        }
+    }
+
+    private int extractModuleStatus(int moduleId, String statusResponse) {
+        final String messageStart = "status=";
+        final String statusFormat = "x,";
+        final int startIndex = messageStart.length() + ((moduleId - 1) * statusFormat.length());
+        String id = statusResponse.substring(startIndex, startIndex + 1);
+        return Integer.parseInt(id);
     }
 
     @Override
@@ -67,11 +115,21 @@ public class RawJambel implements Jambel {
         return redModule;
     }
 
-    private void sendOkCommand(String command) throws JambelException {
+    private String sendCommandExpectResponse(String command) throws JambelException {
         final String response = commLink.sendCommand(command);
         if (response == null) {
-            throw new JambelResponseException(String.format("Received null, expected 'OK' for '%s'", command));
+            throw new JambelResponseException(
+                String.format("Received null, expected response for '%s'", command));
         }
+        if (response.isEmpty()) {
+            throw new JambelResponseException(
+                String.format("Received empty string, expected response for '%s'", command));
+        }
+        return response;
+    }
+
+    private void sendOkCommand(String command) throws JambelException {
+        final String response = sendCommandExpectResponse(command);
         if (!"OK".equals(response)) {
             throw new JambelResponseException(String.format("Received '%s', expected 'OK' for '%s'",
                     response, command));
@@ -79,6 +137,7 @@ public class RawJambel implements Jambel {
     }
 
     private class RawModule implements JambelModule {
+        @Getter
         private final int moduleId;
 
         RawModule(int moduleId) {

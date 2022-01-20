@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class JambelGreenOnTopTest {
 
     private JambelCommLink mockedLink;
@@ -40,5 +42,25 @@ class JambelGreenOnTopTest {
         Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,on");
 
         fixture.red().on();
+    }
+
+    @Test
+    void statusOnOffBlink() throws JambelException {
+        Mockito.doReturn("status=1,0,2,0,0").when(mockedLink).sendCommand("status");
+
+        Jambel.Status status = fixture.status();
+        assertEquals(Jambel.LightStatus.ON, status.getRed());
+        assertEquals(Jambel.LightStatus.OFF, status.getYellow());
+        assertEquals(Jambel.LightStatus.BLINK, status.getGreen());
+    }
+
+    @Test
+    void statusOffFlashBlinkInverse() throws JambelException {
+        Mockito.doReturn("status=0,3,4,0,0").when(mockedLink).sendCommand("status");
+
+        Jambel.Status status = fixture.status();
+        assertEquals(Jambel.LightStatus.OFF, status.getRed());
+        assertEquals(Jambel.LightStatus.FLASH, status.getYellow());
+        assertEquals(Jambel.LightStatus.BLINK_INVERSE, status.getGreen());
     }
 }

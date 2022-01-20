@@ -147,4 +147,25 @@ class RawJambelTest {
 
         assertThrows(JambelIoException.class, () -> fixture.red().blink());
     }
+
+    @Test
+    void statusBrokenResponsePrefix() throws JambelException {
+        Mockito.doReturn("stats=1,0,2,0,0").when(mockedLink).sendCommand("status");
+
+        assertThrows(JambelResponseException.class, () -> fixture.status());
+    }
+
+    @Test
+    void statusUnknownValueInResponse() throws JambelException {
+        Mockito.doReturn("status=1,8,2,0,0").when(mockedLink).sendCommand("status");
+
+        assertThrows(JambelResponseException.class, () -> fixture.status());
+    }
+
+    @Test
+    void statusUnknownStructureOfResponse() throws JambelException {
+        Mockito.doReturn("status=1, 1, 2, 0, 0").when(mockedLink).sendCommand("status");
+
+        assertThrows(JambelResponseException.class, () -> fixture.status());
+    }
 }
