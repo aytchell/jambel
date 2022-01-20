@@ -36,7 +36,7 @@ public class RawJambel implements Jambel {
     }
 
     @Override
-    public synchronized String version() throws JambelException {
+    public String version() throws JambelException {
         if (version == null) {
             version = sendCommandExpectResponse("version");
         }
@@ -44,7 +44,7 @@ public class RawJambel implements Jambel {
     }
 
     @Override
-    public synchronized Status status() throws JambelException {
+    public Status status() throws JambelException {
         final String statusResponse = sendCommandExpectResponse("status");
         if (!statusResponse.startsWith("status=")) {
             throw new JambelResponseException(
@@ -53,6 +53,12 @@ public class RawJambel implements Jambel {
         }
 
         return parseStatusResponse(statusResponse);
+    }
+
+    @Override
+    public void testConnection() throws JambelException
+    {
+        sendOkCommand("test");
     }
 
     private Status parseStatusResponse(String statusResponse) throws JambelResponseException {
@@ -115,7 +121,7 @@ public class RawJambel implements Jambel {
         return redModule;
     }
 
-    private String sendCommandExpectResponse(String command) throws JambelException {
+    private synchronized String sendCommandExpectResponse(String command) throws JambelException {
         final String response = commLink.sendCommand(command);
         if (response == null) {
             throw new JambelResponseException(

@@ -9,6 +9,9 @@ public interface Jambel {
     void setDefaultBlinkTimes(int msecOn, int msecOff) throws JambelException;
     Status status() throws JambelException;
 
+    // throws on connection error; no other effect
+    void testConnection() throws JambelException;
+
     JambelModule green();
     JambelModule yellow();
     JambelModule red();

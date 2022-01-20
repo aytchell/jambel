@@ -17,6 +17,8 @@ public class TestJambel10 {
 
             Jambel.Status status;
 
+            jambel.testConnection();
+
             jambel.reset();
             jambel.red().flash();
             status = jambel.status();
@@ -37,6 +39,7 @@ public class TestJambel10 {
             Thread.sleep(4000);
 
             jambel.reset();
+            jambel.testConnection();
         } catch (JambelException e) {
             e.printStackTrace();
         }
