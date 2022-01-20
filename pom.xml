@@ -10,8 +10,8 @@
 
     <name>jambel remote control</name>
     <description>
-        This code is a kind of a 'device driver' to control the LAN-attached
-        version of jambit's fast feedback device (calles "jambel").
+        This code is a kind of 'device driver' to control the LAN-attached
+        version of jambit's fast feedback device (called "jambel").
     </description>
 
     <properties>

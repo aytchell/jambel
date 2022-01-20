@@ -57,7 +57,7 @@ class JambelTelnetLinkTest {
         final String response = link.sendCommand("reset");
         assertEquals("OK", response);
 
-        // Check the mocks if they where called as expected
+        // Check the mocks if they were called as expected
         verify(tc).connect("localhost", 1337);
         verify(tc).disconnect();
 
@@ -70,11 +70,10 @@ class JambelTelnetLinkTest {
      * broken switch, ...) there will be a UnknownHostException.
      *
      * Let's see if this is handled
-     * @throws JambelException should never happen
      * @throws IOException should never happen
      */
     @Test
-    void unknownHostExceptionLeadsToConnectExcetion() throws JambelException, IOException {
+    void unknownHostExceptionLeadsToConnectException() throws IOException {
         TelnetClient tc = Mockito.mock(TelnetClient.class);
         doThrow(new UnknownHostException())
             .when(tc).connect(anyString(), anyInt());
@@ -102,9 +101,9 @@ class JambelTelnetLinkTest {
 
         // setup mock for InputStream: for each successive read(...) call we only place one
         // character into the given buffer (at the correct offset)
-        doAnswer(new Answer() {
+        doAnswer(new Answer<Integer>() {
             private int count = 0;
-            public Object answer(InvocationOnMock invocation) throws IOException {
+            public Integer answer(InvocationOnMock invocation) throws IOException {
                 Object[] args = invocation.getArguments();
                 byte[] buffer = ((byte[]) args[0]);
                 int offset = (int)args[1];
@@ -122,7 +121,7 @@ class JambelTelnetLinkTest {
             }
         }).when(mockedInput).read(any(byte[].class), anyInt(), anyInt());
 
-        // enagage ...
+        // engage ...
         final JambelTelnetLink link = new JambelTelnetLink(tc, "localhost", 1337);
         final String response = link.sendCommand("set=2,on");
         assertEquals("OK", response);
@@ -135,7 +134,7 @@ class JambelTelnetLinkTest {
      * Try again if a 'connection refused' occurs
      *
      * The jambel's TCP stack is very simple. Very simple. It only allows one connection at a
-     * time and after the connection was teared down it needs some time until a new connection
+     * time and after the connection was torn down it needs some time until a new connection
      * is accepted.
      * During manual tests I had the case that if you send multiple commands quickly in a row
      * the second command will break with a 'connection refused' error. In this case the code
@@ -156,9 +155,9 @@ class JambelTelnetLinkTest {
         doReturn(mockedOutput).when(tc).getOutputStream();
 
         // throw on first 'connect()' call. All successive calls pass
-        doAnswer(new Answer() {
+        doAnswer(new Answer<Integer>() {
             private int count = 0;
-            public Object answer(InvocationOnMock invocation) throws ConnectException {
+            public Integer answer(InvocationOnMock invocation) throws ConnectException {
                 if (0 == count) {
                     ++count;
                     throw new ConnectException("Connection refused by peer");
@@ -172,7 +171,7 @@ class JambelTelnetLinkTest {
         final String response = link.sendCommand("set=3,off");
         assertEquals("OK", response);
 
-        // Check the mock if they where called as expected
+        // Check the mock if they were called as expected
         verify(tc).disconnect();
 
         final String sentCommand = new String(mockedOutput.toByteArray(), StandardCharsets.UTF_8);

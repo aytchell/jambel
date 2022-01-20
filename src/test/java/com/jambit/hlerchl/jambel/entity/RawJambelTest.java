@@ -93,10 +93,11 @@ class RawJambelTest {
     }
 
     @Test
-    void letRedBlinkInvers() throws JambelException {
+    void letRedBlinkInverse() throws JambelException {
+        // [sic!] the telnet command really spells "invers"
         Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,blink_invers");
 
-        fixture.red().blinkInvers();
+        fixture.red().blinkInverse();
     }
 
     @Test

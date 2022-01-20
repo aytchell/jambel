@@ -24,9 +24,9 @@ public class TestJambel10 {
             Thread.sleep(4000);
 
             jambel.red().off();
-            jambel.green().blinkInvers();
+            jambel.green().blinkInverse();
             status = jambel.status();
-            System.out.println("Status (green blink invers): " + status.toString());
+            System.out.println("Status (green blink inverse): " + status.toString());
             Thread.sleep(4000);
 
             jambel.green().off();

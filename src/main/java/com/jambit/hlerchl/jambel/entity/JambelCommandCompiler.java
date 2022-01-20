@@ -82,12 +82,12 @@ public class JambelCommandCompiler {
             throw new JambelCompileException(
                 "jambel-command '" + cmdParts[0] + "' requires another parameter");
         }
-        Consumer<Integer> x = null;
+
         switch (cmdParts[1]) {
             case "on": return module::on;
             case "off": return module::off;
             case "blink": return module::blink;
-            case "blink_invers": return module::blinkInvers;
+            case "blink_inverse": return module::blinkInverse;
             case "flash": return module::flash;
             case "set_on_off_times":
                 ensureNumberOfParameters(cmdParts[0] + " set_blink_times", 2,

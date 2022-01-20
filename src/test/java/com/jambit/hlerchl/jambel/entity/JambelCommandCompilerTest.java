@@ -11,19 +11,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JambelCommandCompilerTest {
 
-    private Jambel mockedJambel = Mockito.mock(Jambel.class);
-    private JambelModule mockedRed = Mockito.mock(JambelModule.class);
-    private JambelModule mockedYellow = Mockito.mock(JambelModule.class);
-    private JambelModule mockedGreen = Mockito.mock(JambelModule.class);
+    private final Jambel mockedJambel = Mockito.mock(Jambel.class);
+    private final JambelModule mockedRed = Mockito.mock(JambelModule.class);
+    private final JambelModule mockedYellow = Mockito.mock(JambelModule.class);
+    private final JambelModule mockedGreen = Mockito.mock(JambelModule.class);
 
     @Test
-    void nullAsCommandThrows() throws JambelException {
+    void nullAsCommandThrows() {
         assertThrows(JambelCompileException.class,
             () -> JambelCommandCompiler.compile(mockedJambel, null));
     }
 
     @Test
-    void emptyCommandThrows() throws JambelException {
+    void emptyCommandThrows() {
         assertThrows(JambelCompileException.class,
             () -> JambelCommandCompiler.compile(mockedJambel, "   "));
     }
@@ -36,7 +36,7 @@ class JambelCommandCompilerTest {
     }
 
     @Test
-    void setDefaultBlinkTimesWrongParamCountThrows() throws JambelException {
+    void setDefaultBlinkTimesWrongParamCountThrows() {
         assertThrows(JambelCompileException.class,
             () -> JambelCommandCompiler.compile(mockedJambel, "set_blink_times    "));
         assertThrows(JambelCompileException.class,
@@ -46,7 +46,7 @@ class JambelCommandCompilerTest {
     }
 
     @Test
-    void setDefaultBlinkTimesWrongParamTypeThrows() throws JambelException {
+    void setDefaultBlinkTimesWrongParamTypeThrows() {
         assertThrows(JambelCompileException.class,
             () -> JambelCommandCompiler.compile(mockedJambel, "set_blink_times 100 3a4"));
     }
@@ -132,13 +132,13 @@ class JambelCommandCompilerTest {
     }
 
     @Test
-    void letRedBlinkInvers() throws JambelException {
+    void letRedBlinkInverse() throws JambelException {
         Mockito.doReturn(mockedYellow).when(mockedJambel).yellow();
 
-        JambelCommandCompiler.compile(mockedJambel, "yellow blink_invers").execute();
+        JambelCommandCompiler.compile(mockedJambel, "yellow blink_inverse").execute();
 
         Mockito.verify(mockedJambel).yellow();
-        Mockito.verify(mockedYellow).blinkInvers();
+        Mockito.verify(mockedYellow).blinkInverse();
         Mockito.verifyNoMoreInteractions(mockedJambel);
         Mockito.verifyNoMoreInteractions(mockedYellow);
     }

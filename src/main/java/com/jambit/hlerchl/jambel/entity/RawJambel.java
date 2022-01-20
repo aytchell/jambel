@@ -160,7 +160,8 @@ public class RawJambel implements Jambel {
         }
 
         @Override
-        public void blinkInvers() throws JambelException {
+        public void blinkInverse() throws JambelException {
+            // [sic!] the telnet command really spells "invers"
             sendOkCommand("set=" + moduleId + ",blink_invers");
         }
 
