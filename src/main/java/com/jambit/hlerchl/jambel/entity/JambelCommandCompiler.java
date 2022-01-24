@@ -5,8 +5,6 @@ import com.jambit.hlerchl.jambel.JambelCommand;
 import com.jambit.hlerchl.jambel.JambelModule;
 import com.jambit.hlerchl.jambel.exceptions.JambelCompileException;
 
-import java.util.function.Consumer;
-
 public class JambelCommandCompiler {
     public static JambelCommand compile(Jambel jambel, String command) throws JambelCompileException {
         if (command == null) {
@@ -26,6 +24,9 @@ public class JambelCommandCompiler {
             case "reset":
                 ensureNumberOfParameters("reset", 0, cmdParts.length - 1);
                 return compileResetCmd(jambel);
+            case "test_connection":
+                ensureNumberOfParameters("test_connection", 0, cmdParts.length - 1);
+                return compileTestConnectionCmd(jambel);
             case "set_blink_times":
                 ensureNumberOfParameters("set_blink_times", 2, cmdParts.length - 1);
                 return compileSetBlinkTimesCmd(jambel, cmdParts);
@@ -56,6 +57,10 @@ public class JambelCommandCompiler {
 
     private static JambelCommand compileResetCmd(Jambel jambel) {
         return jambel::reset;
+    }
+
+    private static JambelCommand compileTestConnectionCmd(Jambel jambel) {
+        return jambel::testConnection;
     }
 
     private static JambelCommand compileSetBlinkTimesCmd(Jambel jambel, String[] cmdParts)

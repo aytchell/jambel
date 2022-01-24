@@ -29,6 +29,13 @@ class JambelCommandCompilerTest {
     }
 
     @Test
+    void test() throws JambelException {
+        JambelCommandCompiler.compile(mockedJambel, " test_connection ").execute();
+        Mockito.verify(mockedJambel).testConnection();
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+    }
+
+    @Test
     void reset() throws JambelException {
         JambelCommandCompiler.compile(mockedJambel, " reset ").execute();
         Mockito.verify(mockedJambel).reset();
