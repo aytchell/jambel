@@ -1,6 +1,6 @@
 package com.jambit.hlerchl.jambel.link;
 
-import com.jambit.hlerchl.jambel.JambelCommLink;
+import com.jambit.hlerchl.jambel.entity.JambelCommLink;
 import com.jambit.hlerchl.jambel.exceptions.JambelConnectException;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelIoException;

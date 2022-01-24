@@ -1,7 +1,6 @@
 package com.jambit.hlerchl.jambel.entity;
 
 import com.jambit.hlerchl.jambel.Jambel;
-import com.jambit.hlerchl.jambel.JambelCommLink;
 import com.jambit.hlerchl.jambel.link.JambelTelnetLink;
 
 public class JambelGreenOnTop extends RawJambel {

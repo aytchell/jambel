@@ -4,7 +4,6 @@ import com.jambit.hlerchl.jambel.Jambel;
 import com.jambit.hlerchl.jambel.JambelModule;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
-import com.jambit.hlerchl.jambel.JambelCommLink;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
