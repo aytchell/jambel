@@ -6,13 +6,51 @@
 
     <groupId>com.jambit.hlerchl</groupId>
     <artifactId>jambel</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <name>jambel remote control</name>
     <description>
         This code is a kind of 'device driver' to control the LAN-attached
         version of jambit's fast feedback device (called "jambel").
     </description>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Hannes Lerchl</name>
+            <email>hannes.lerchl@jambit.com</email>
+            <timezone>Europe/Berlin</timezone>
+            <roles>
+                <role>initiator</role>
+                <role>developer</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://bitbucket.jambit.com:7999/~hlerchl/jambel.git</connection>
+        <developerConnection>scm:git:git://bitbucket.jambit.com:7999/~hlerchl/jambel.git</developerConnection>
+        <url>http://bitbucket.jambit.com/users/hlerchl/jambel</url>
+        <tag>releases/1.2.1</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>jambit-snapshots</id>
+            <url>https://nexus3.jambit.com/repository/jambit-snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>jambit-releases</id>
+            <url>https://nexus3.jambit.com/repository/jambit-releases</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,6 +61,8 @@
         <slf4j.version>1.7.32</slf4j.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <mockito.version>4.2.0</mockito.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
     </properties>
 
     <dependencies>
@@ -73,6 +113,35 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
