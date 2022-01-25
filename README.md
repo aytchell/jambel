@@ -38,7 +38,7 @@ In case you'd like to directly start, here is the maven pointer:
     <dependency>
         <groupId>com.jambit.hlerchl</groupId>
         <artifactId>jambel</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.2</version>
     <dependency>
 ```
 
