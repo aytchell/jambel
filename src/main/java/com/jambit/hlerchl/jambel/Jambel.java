@@ -7,7 +7,7 @@ import lombok.Value;
  * The definitive interface for all things a "jambel" can do.
  * <p>
  * A "jambel" is a piece of hardware created by employees of jambit GmbH
- * with a functionality similar (and beyond) to a small traffic light
+ * with a functionality similar to (and beyond) a small traffic light
  * ("Ampel" in german).
  * <p>
  * The "jambel" is attached via ethernet and can be controlled by using
