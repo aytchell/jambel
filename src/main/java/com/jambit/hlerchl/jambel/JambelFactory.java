@@ -122,6 +122,12 @@ public class JambelFactory {
      *                  milliseconds to stay on and off.
      *                  See {@link JambelModule#setBlinkTimes}</li>
      *          </ul>
+     *      </li>
+     *      <li>"set_ryg &lt;red_mode&gt; &lt;yellow_mode&gt; &lt;green_mode&gt;" : Set all
+     *              three lights in one call. This command expects three parameters. The
+     *              parameters are the light modes ('on', 'off', 'blink', 'blink_inverse'
+     *              or 'flash') for red, yellow and green (in this order). Upper/lower case
+     *              for the modes are both accepted.</li>
      * </ul>
      *
      * @param jambel the Jambel which the command should control

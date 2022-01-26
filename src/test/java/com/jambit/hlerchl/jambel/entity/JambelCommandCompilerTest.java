@@ -197,4 +197,33 @@ class JambelCommandCompilerTest {
         Mockito.verifyNoMoreInteractions(mockedJambel);
         Mockito.verifyNoMoreInteractions(mockedYellow);
     }
+
+    @Test
+    void setAllToBlinkInverseOffOn() throws JambelException {
+        JambelCommandCompiler.compile(mockedJambel,
+            "set_ryg blink_inverse off on").execute();
+
+        Mockito.verify(mockedJambel).setAllLights(
+            Jambel.LightStatus.BLINK_INVERSE, Jambel.LightStatus.OFF, Jambel.LightStatus.ON);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+    }
+
+    @Test
+    void setAllToFlashBlinkInverseOff() throws JambelException {
+        JambelCommandCompiler.compile(mockedJambel,
+            "set_ryg flash blink_inverse off").execute();
+
+        Mockito.verify(mockedJambel).setAllLights(
+            Jambel.LightStatus.FLASH, Jambel.LightStatus.BLINK_INVERSE, Jambel.LightStatus.OFF);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+    }
+
+    @Test
+    void setAllToOnBlinkFlash() throws JambelException {
+        JambelCommandCompiler.compile(mockedJambel, "set_ryg on blink flash").execute();
+
+        Mockito.verify(mockedJambel).setAllLights(
+            Jambel.LightStatus.ON, Jambel.LightStatus.BLINK, Jambel.LightStatus.FLASH);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+    }
 }

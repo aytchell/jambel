@@ -36,6 +36,9 @@ public class JambelCommandCompiler {
                 return compileModuleCmd(jambel.yellow(), cmdParts);
             case "green":
                 return compileModuleCmd(jambel.green(), cmdParts);
+            case "set_ryg":
+                ensureNumberOfParameters("set_ryg", 3, cmdParts.length - 1);
+                return compileSetRygCmd(jambel, cmdParts);
         }
 
         final String command = String.join(" ", cmdParts);
@@ -131,5 +134,24 @@ public class JambelCommandCompiler {
             throw new JambelCompileException(String.format(
                 "Failed to parse on/off times for '%s set_blink_times' (%s)", cmdParts[0], e.getMessage()));
         }
+    }
+
+    private static JambelCommand compileSetRygCmd(Jambel jambel, String[] cmdParts)
+    throws JambelCompileException {
+        try {
+            final Jambel.LightStatus redMode = interpretStatus(cmdParts[1]);
+            final Jambel.LightStatus yellowMode = interpretStatus(cmdParts[2]);
+            final Jambel.LightStatus greenMode = interpretStatus(cmdParts[3]);
+
+            return () -> jambel.setAllLights(redMode, yellowMode, greenMode);
+        } catch (Exception e) {
+            throw new JambelCompileException(String.format(
+                "Failed to parse light modes for 'set_ryg' (%s)", e.getMessage()));
+        }
+    }
+
+    private static Jambel.LightStatus interpretStatus(String status) {
+        final String upperCaseStatus = status.toUpperCase();
+        return Jambel.LightStatus.valueOf(upperCaseStatus);
     }
 }
