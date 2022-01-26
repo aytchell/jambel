@@ -39,7 +39,9 @@ public class TestJambel10 {
 
             jambel.green().off();
             jambel.green().setBlinkTimes(400, 200);
-            jambel.yellow().blink();
+            jambel.yellow().on(1000);
+            jambel.red().on(2000);
+            jambel.green().on(3000);
             status = jambel.status();
             System.out.println("Status (yellow blink): " + status.toString());
             Thread.sleep(4000);
