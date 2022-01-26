@@ -86,6 +86,21 @@ public interface JambelModule {
     void flash() throws JambelException;
 
     /**
+     * Switches the light into a given mode.
+     * <p>
+     * Select the light mode for this module to the given enum's value.
+     * This method enable a "more dynamic" choice of the selected mode:
+     * a caller doesn't need to know the mode at compile time; this
+     * choice can be postponed to runtime.
+     *
+     * @see Jambel#status()
+     * @see Jambel.LightStatus
+     * @throws JambelException thrown in case the jambel couldn't be reached
+     *      or behaved unexpectedly
+     */
+    void setMode(Jambel.LightStatus mode) throws JambelException;
+
+    /**
      * Set blink timings specific to this light.
      * <p>
      * The on and off times are used, when the light is blinking.

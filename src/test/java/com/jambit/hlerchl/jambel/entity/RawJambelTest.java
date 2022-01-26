@@ -66,6 +66,24 @@ class RawJambelTest {
     }
 
     @Test
+    void setModeGreenOn() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.green().setMode(Jambel.LightStatus.ON); }, "set=3,on");
+    }
+
+    @Test
+    void setModeYellowOn() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.yellow().setMode(Jambel.LightStatus.ON); }, "set=2,on");
+    }
+
+    @Test
+    void setModeRedOn() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.red().setMode(Jambel.LightStatus.ON); }, "set=1,on");
+    }
+
+    @Test
     void turnGreen30MSecOn() throws JambelException {
         expectOkCommand(() -> { fixture.green().on(30); }, "set=3,30");
     }
@@ -96,9 +114,35 @@ class RawJambelTest {
     }
 
     @Test
+    void setModeRedOff() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.red().setMode(Jambel.LightStatus.OFF); }, "set=1,off");
+    }
+
+    @Test
+    void setModeRedBlink() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.red().setMode(Jambel.LightStatus.BLINK); }, "set=1,blink");
+    }
+
+    @Test
+    void setModeRedFlash() throws JambelException {
+        expectOkCommand(
+            () -> { fixture.red().setMode(Jambel.LightStatus.FLASH); }, "set=1,flash");
+    }
+
+    @Test
     void letRedBlinkInverse() throws JambelException {
         // [sic!] the telnet command really spells "invers"
         expectOkCommand(() -> { fixture.red().blinkInverse(); }, "set=1,blink_invers");
+    }
+
+    @Test
+    void setModeRedBlinkInverse() throws JambelException {
+        // [sic!] the telnet command really spells "invers"
+        expectOkCommand(
+            () -> { fixture.red().setMode(Jambel.LightStatus.BLINK_INVERSE); },
+            "set=1,blink_invers");
     }
 
     @Test
@@ -121,10 +165,14 @@ class RawJambelTest {
     void setAllLightsOnFlashBlinkForInverseModules() throws JambelException {
         final Jambel inverseFixture = new RawJambel(mockedLink,
             3, 2, 1);
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=2,3,1");
+        final String telnetCommand = "set_all=2,3,1";
+        Mockito.doReturn("OK").when(mockedLink).sendCommand(telnetCommand);
 
         inverseFixture.setAllLights(Jambel.LightStatus.ON, Jambel.LightStatus.FLASH,
             Jambel.LightStatus.BLINK);
+
+        Mockito.verify(mockedLink).sendCommand(telnetCommand);
+        Mockito.verifyNoMoreInteractions(mockedLink);
     }
 
     @Test
@@ -135,11 +183,27 @@ class RawJambelTest {
     }
 
     @Test
-    void inverseModuleOrderWorks() throws JambelException {
+    void inverseModuleOrderRedOn() throws JambelException {
         final Jambel inverseFixture = new RawJambel(mockedLink, 3, 2, 1);
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=3,on");
+        final String telnetCommand = "set=3,on";
+        Mockito.doReturn("OK").when(mockedLink).sendCommand(telnetCommand);
 
         inverseFixture.red().on();
+
+        Mockito.verify(mockedLink).sendCommand(telnetCommand);
+        Mockito.verifyNoMoreInteractions(mockedLink);
+    }
+
+    @Test
+    void inverseModuleOrderRedSetModeOn() throws JambelException {
+        final Jambel inverseFixture = new RawJambel(mockedLink, 3, 2, 1);
+        final String telnetCommand = "set=3,on";
+        Mockito.doReturn("OK").when(mockedLink).sendCommand(telnetCommand);
+
+        inverseFixture.red().setMode(Jambel.LightStatus.ON);
+
+        Mockito.verify(mockedLink).sendCommand(telnetCommand);
+        Mockito.verifyNoMoreInteractions(mockedLink);
     }
 
     @Test

@@ -102,6 +102,19 @@ public class RawJambel implements Jambel {
         }
     }
 
+    private String getStatusCommand(LightStatus status) throws Exception {
+        switch (status) {
+            case OFF: return "off";
+            case ON: return "on";
+            case BLINK: return "blink";
+            case FLASH: return "flash";
+            // [sic!] the telnet command really spells "invers"
+            case BLINK_INVERSE: return "blink_invers";
+            default:
+                throw new Exception("Unknown status identifier");
+        }
+    }
+
     private int extractModuleStatus(int moduleId, String statusResponse) {
         final String messageStart = "status=";
         final String statusFormat = "x,";
@@ -206,6 +219,16 @@ public class RawJambel implements Jambel {
         @Override
         public void flash() throws JambelException {
             sendOkCommand("set=" + moduleId + ",flash");
+        }
+
+        @Override
+        public void setMode(Jambel.LightStatus mode) throws JambelException {
+            try {
+                final String modeName = getStatusCommand(mode);
+                sendOkCommand("set=" + moduleId + "," + modeName);
+            } catch (Exception e) {
+                throw new JambelException(e.getMessage());
+            }
         }
 
         @Override
