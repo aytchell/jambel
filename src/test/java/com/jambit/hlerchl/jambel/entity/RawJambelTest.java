@@ -1,6 +1,7 @@
 package com.jambit.hlerchl.jambel.entity;
 
 import com.jambit.hlerchl.jambel.Jambel;
+import com.jambit.hlerchl.jambel.JambelCommand;
 import com.jambit.hlerchl.jambel.exceptions.JambelConnectException;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelIoException;
@@ -8,6 +9,8 @@ import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,9 +30,7 @@ class RawJambelTest {
 
     @Test
     void reset() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("reset");
-
-        fixture.reset();
+        expectOkCommand(() -> fixture.reset(), "reset");
     }
 
     @Test
@@ -51,89 +52,69 @@ class RawJambelTest {
 
     @Test
     void turnGreenOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=3,on");
-
-        fixture.green().on();
+        expectOkCommand(() -> { fixture.green().on(); }, "set=3,on");
     }
 
     @Test
     void turnYellowOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=2,on");
-
-        fixture.yellow().on();
+        expectOkCommand(() -> { fixture.yellow().on(); }, "set=2,on");
     }
 
     @Test
     void turnRedOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,on");
-
-        fixture.red().on();
+        expectOkCommand(() -> { fixture.red().on(); }, "set=1,on");
     }
 
     @Test
     void turnGreen30MSecOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=3,30");
-
-        fixture.green().on(30);
+        expectOkCommand(() -> { fixture.green().on(30); }, "set=3,30");
     }
 
     @Test
     void turnYellow60MSecOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=2,60");
-
-        fixture.yellow().on(60);
+        expectOkCommand(() -> { fixture.yellow().on(60); }, "set=2,60");
     }
 
     @Test
     void turnRed90MSecOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,90");
-
-        fixture.red().on(90);
+        expectOkCommand(() -> { fixture.red().on(90); }, "set=1,90");
     }
 
     @Test
     void turnRedOff() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,off");
-
-        fixture.red().off();
+        expectOkCommand(() -> { fixture.red().off(); }, "set=1,off");
     }
 
     @Test
     void letRedBlink() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,blink");
-
-        fixture.red().blink();
+        expectOkCommand(() -> { fixture.red().blink(); }, "set=1,blink");
     }
 
     @Test
     void letRedFlash() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,flash");
-
-        fixture.red().flash();
+        expectOkCommand(() -> { fixture.red().flash(); }, "set=1,flash");
     }
 
     @Test
     void letRedBlinkInverse() throws JambelException {
         // [sic!] the telnet command really spells "invers"
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,blink_invers");
-
-        fixture.red().blinkInverse();
+        expectOkCommand(() -> { fixture.red().blinkInverse(); }, "set=1,blink_invers");
     }
 
     @Test
     void setAllLightsBlinkOnOff() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=2,1,0");
-
-        fixture.setAllLights(Jambel.LightStatus.BLINK, Jambel.LightStatus.ON,
-            Jambel.LightStatus.OFF);
+        expectOkCommand(() ->  {
+            fixture.setAllLights(Jambel.LightStatus.BLINK, Jambel.LightStatus.ON,
+                Jambel.LightStatus.OFF);
+        }, "set_all=2,1,0");
     }
 
     @Test
     void setAllLightsFlashBlinkInverseOn() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=3,4,1");
-
-        fixture.setAllLights(Jambel.LightStatus.FLASH, Jambel.LightStatus.BLINK_INVERSE,
-            Jambel.LightStatus.ON);
+        expectOkCommand(() -> {
+            fixture.setAllLights(Jambel.LightStatus.FLASH, Jambel.LightStatus.BLINK_INVERSE,
+                Jambel.LightStatus.ON);
+        }, "set_all=3,4,1");
     }
 
     @Test
@@ -148,9 +129,9 @@ class RawJambelTest {
 
     @Test
     void setBlinkTimersForSingleModule() throws JambelException {
-        Mockito.doReturn("OK").when(mockedLink).sendCommand("blink_time=1,800,400");
-
-        fixture.red().setBlinkTimes(800, 400);
+        expectOkCommand(() -> {
+            fixture.red().setBlinkTimes(800, 400);
+        }, "blink_time=1,800,400");
     }
 
     @Test
@@ -214,5 +195,14 @@ class RawJambelTest {
         Mockito.doReturn("status=1, 1, 2, 0, 0").when(mockedLink).sendCommand("status");
 
         assertThrows(JambelResponseException.class, () -> fixture.status());
+    }
+
+    private void expectOkCommand(JambelCommand command, String telnetCommand) throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand(telnetCommand);
+
+        command.execute();
+
+        Mockito.verify(mockedLink).sendCommand(telnetCommand);
+        Mockito.verifyNoMoreInteractions(mockedLink);
     }
 }
