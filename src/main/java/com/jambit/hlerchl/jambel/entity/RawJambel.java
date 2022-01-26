@@ -4,6 +4,7 @@ import com.jambit.hlerchl.jambel.Jambel;
 import com.jambit.hlerchl.jambel.JambelModule;
 import com.jambit.hlerchl.jambel.exceptions.JambelException;
 import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
+import com.jambit.hlerchl.jambel.exceptions.LookupException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,7 +79,7 @@ public class RawJambel implements Jambel {
         );
     }
 
-    private LightStatus interpretStatusId(int statusId) throws Exception {
+    private LightStatus interpretStatusId(int statusId) throws LookupException {
         switch (statusId) {
             case 0: return LightStatus.OFF;
             case 1: return LightStatus.ON;
@@ -86,11 +87,11 @@ public class RawJambel implements Jambel {
             case 3: return LightStatus.FLASH;
             case 4: return LightStatus.BLINK_INVERSE;
             default:
-                throw new Exception("Unknown status identifier");
+                throw new LookupException("Unknown status identifier");
         }
     }
 
-    private int getStatusId(LightStatus status) throws Exception {
+    private int getStatusId(LightStatus status) throws LookupException {
         switch (status) {
             case OFF: return 0;
             case ON: return 1;
@@ -98,11 +99,11 @@ public class RawJambel implements Jambel {
             case FLASH: return 3;
             case BLINK_INVERSE: return 4;
             default:
-                throw new Exception("Unknown status identifier");
+                throw new LookupException("Unknown status identifier");
         }
     }
 
-    private String getStatusCommand(LightStatus status) throws Exception {
+    private String getStatusCommand(LightStatus status) throws LookupException {
         switch (status) {
             case OFF: return "off";
             case ON: return "on";
@@ -111,7 +112,7 @@ public class RawJambel implements Jambel {
             // [sic!] the telnet command really spells "invers"
             case BLINK_INVERSE: return "blink_invers";
             default:
-                throw new Exception("Unknown status identifier");
+                throw new LookupException("Unknown status identifier");
         }
     }
 
@@ -155,7 +156,7 @@ public class RawJambel implements Jambel {
             final String command = "set_all=" +
                 lightCodes.get(1) + "," + lightCodes.get(2) + "," + lightCodes.get(3);
             sendOkCommand(command);
-        } catch (Exception e) {
+        } catch (LookupException e) {
             throw new JambelException(e.getMessage());
         }
     }
@@ -191,7 +192,7 @@ public class RawJambel implements Jambel {
 
         @Override
         public void on() throws JambelException {
-            sendOkCommand("set=" + moduleId + ",on");
+            setMode(LightStatus.ON);
         }
 
         @Override
@@ -202,23 +203,22 @@ public class RawJambel implements Jambel {
 
         @Override
         public void off() throws JambelException {
-            sendOkCommand("set=" + moduleId + ",off");
+            setMode(LightStatus.OFF);
         }
 
         @Override
         public void blink() throws JambelException {
-            sendOkCommand("set=" + moduleId + ",blink");
+            setMode(LightStatus.BLINK);
         }
 
         @Override
         public void blinkInverse() throws JambelException {
-            // [sic!] the telnet command really spells "invers"
-            sendOkCommand("set=" + moduleId + ",blink_invers");
+            setMode(LightStatus.BLINK_INVERSE);
         }
 
         @Override
         public void flash() throws JambelException {
-            sendOkCommand("set=" + moduleId + ",flash");
+            setMode(LightStatus.FLASH);
         }
 
         @Override
@@ -226,7 +226,7 @@ public class RawJambel implements Jambel {
             try {
                 final String modeName = getStatusCommand(mode);
                 sendOkCommand("set=" + moduleId + "," + modeName);
-            } catch (Exception e) {
+            } catch (LookupException e) {
                 throw new JambelException(e.getMessage());
             }
         }
