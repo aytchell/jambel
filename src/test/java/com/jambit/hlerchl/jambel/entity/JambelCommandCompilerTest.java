@@ -103,6 +103,42 @@ class JambelCommandCompilerTest {
     }
 
     @Test
+    void turnGreenSomeMSecOn() throws JambelException {
+        Mockito.doReturn(mockedGreen).when(mockedJambel).green();
+
+        JambelCommandCompiler.compile(mockedJambel, "green on_for 60").execute();
+
+        Mockito.verify(mockedJambel).green();
+        Mockito.verify(mockedGreen).on(60);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+        Mockito.verifyNoMoreInteractions(mockedGreen);
+    }
+
+    @Test
+    void turnYellowSomeMSecOn() throws JambelException {
+        Mockito.doReturn(mockedYellow).when(mockedJambel).yellow();
+
+        JambelCommandCompiler.compile(mockedJambel, "yellow on_for 120").execute();
+
+        Mockito.verify(mockedJambel).yellow();
+        Mockito.verify(mockedYellow).on(120);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+        Mockito.verifyNoMoreInteractions(mockedYellow);
+    }
+
+    @Test
+    void turnRedSomeMSecOn() throws JambelException {
+        Mockito.doReturn(mockedRed).when(mockedJambel).red();
+
+        JambelCommandCompiler.compile(mockedJambel, "red on_for 42").execute();
+
+        Mockito.verify(mockedJambel).red();
+        Mockito.verify(mockedRed).on(42);
+        Mockito.verifyNoMoreInteractions(mockedJambel);
+        Mockito.verifyNoMoreInteractions(mockedRed);
+    }
+
+    @Test
     void turnRedOff() throws JambelException {
         Mockito.doReturn(mockedRed).when(mockedJambel).red();
 

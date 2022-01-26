@@ -109,6 +109,8 @@ public class JambelFactory {
      *          light of the jambel. Expects at least one more parameter:
      *          <ul>
      *              <li>"... on" : Turn the light on. See {@link JambelModule#on()}</li>
+     *              <li>"... on_for &lt;msec&gt;" : Turn the light some milliseconds on
+     *                  (then off again). See {@link JambelModule#on(int)}</li>
      *              <li>"... off" : Turn the light off. See {@link JambelModule#off()}</li>
      *              <li>"... blink" : Lets the light blink. See {@link JambelModule#blink()}</li>
      *              <li>"... flash" : Lets the light flash. See {@link JambelModule#flash()}</li>

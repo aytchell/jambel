@@ -90,18 +90,34 @@ public class JambelCommandCompiler {
 
         switch (cmdParts[1]) {
             case "on": return module::on;
+            case "on_for":
+                ensureNumberOfParameters(cmdParts[0] + " on_for", 1,
+                    cmdParts.length - 2);
+                return compileOnForCmd(module, cmdParts);
             case "off": return module::off;
             case "blink": return module::blink;
             case "blink_inverse": return module::blinkInverse;
             case "flash": return module::flash;
             case "set_on_off_times":
-                ensureNumberOfParameters(cmdParts[0] + " set_blink_times", 2,
+                ensureNumberOfParameters(cmdParts[0] + " set_on_off_times", 2,
                     cmdParts.length - 2);
                 return compileSetBlinkTimesCmd(module, cmdParts);
         }
 
         final String command = String.join(" ", cmdParts);
         throw new JambelCompileException("'" + command + "' is no valid jambel command");
+    }
+
+    private static JambelCommand compileOnForCmd(JambelModule module, String[] cmdParts)
+        throws JambelCompileException {
+        try {
+            final int onTimeMsec = Integer.parseInt(cmdParts[2]);
+
+            return () -> module.on(onTimeMsec);
+        } catch (Exception e) {
+            throw new JambelCompileException(String.format(
+                "Failed to parse on duration for '%s on_for' (%s)", cmdParts[0], e.getMessage()));
+        }
     }
 
     private static JambelCommand compileSetBlinkTimesCmd(JambelModule module, String[] cmdParts)
