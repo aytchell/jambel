@@ -46,6 +46,9 @@ public class TestJambel10 {
             System.out.println("Status (yellow blink): " + status.toString());
             Thread.sleep(4000);
 
+            jambel.setAllLights(Jambel.LightStatus.BLINK, Jambel.LightStatus.ON, Jambel.LightStatus.FLASH);
+            Thread.sleep(4000);
+
             jambel.reset();
             jambel.testConnection();
         } catch (JambelException e) {

@@ -150,7 +150,7 @@ class RawJambelTest {
         expectOkCommand(() ->  {
             fixture.setAllLights(Jambel.LightStatus.BLINK, Jambel.LightStatus.ON,
                 Jambel.LightStatus.OFF);
-        }, "set_all=2,1,0");
+        }, "set_all=2,1,0,0");
     }
 
     @Test
@@ -158,14 +158,14 @@ class RawJambelTest {
         expectOkCommand(() -> {
             fixture.setAllLights(Jambel.LightStatus.FLASH, Jambel.LightStatus.BLINK_INVERSE,
                 Jambel.LightStatus.ON);
-        }, "set_all=3,4,1");
+        }, "set_all=3,4,1,0");
     }
 
     @Test
     void setAllLightsOnFlashBlinkForInverseModules() throws JambelException {
         final Jambel inverseFixture = new RawJambel(mockedLink,
             3, 2, 1);
-        final String telnetCommand = "set_all=2,3,1";
+        final String telnetCommand = "set_all=2,3,1,0";
         Mockito.doReturn("OK").when(mockedLink).sendCommand(telnetCommand);
 
         inverseFixture.setAllLights(Jambel.LightStatus.ON, Jambel.LightStatus.FLASH,

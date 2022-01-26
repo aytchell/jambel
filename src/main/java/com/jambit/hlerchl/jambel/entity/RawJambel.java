@@ -153,8 +153,12 @@ public class RawJambel implements Jambel {
             lightCodes.put(redModule.moduleId, getStatusId(redStatus));
             lightCodes.put(yellowModule.moduleId, getStatusId(yellowStatus));
             lightCodes.put(greenModule.moduleId, getStatusId(greenStatus));
+
+            // the jambel supports up to four modules, so we have to send four values
+            // otherwise it will halt and wait for the fourth value
             final String command = "set_all=" +
-                lightCodes.get(1) + "," + lightCodes.get(2) + "," + lightCodes.get(3);
+                lightCodes.get(1) + "," + lightCodes.get(2) + "," + lightCodes.get(3) + ",0";
+
             sendOkCommand(command);
         } catch (LookupException e) {
             throw new JambelException(e.getMessage());
