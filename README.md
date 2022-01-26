@@ -12,7 +12,7 @@ can be separately controlled to be on, off, blinking or flashing.
 
 Due to historical reasons there are two kinds of jambel devices:
  * those with a **red** light on the top (yellow, green below) and
- * those with a **green** light on the top (yellow, red below) and
+ * those with a **green** light on the top (yellow, red below)
 
 ## Introduction
 
@@ -59,10 +59,16 @@ can turn the three lights on and off:
     jambel.yellow().on();
     jambel.green().on();
 
-    /// ... and off again
+    // ... and off again
     jambel.red().off();
     jambel.yellow().off();
     jambel.green().off();
+
+    // turn light on for x milliseconds
+    // then automatically off again (the jambel device will do that)
+    jambel.red().on(1000);
+    jambel.yellow().on(2000);
+    jambel.green().on(3000);
 ```
 
 As you can see, there is no "business logic". Lights can be switched on
@@ -103,6 +109,26 @@ timings are chosen.
     // instead of "blinkInverse") so that whenever red is turned on,
     // then yellow is turned off (and vice versa).
     jambel.green().blinkInverse();
+```
+
+Each of these light modes (except `on(msec)`) can also be set
+via enum parameter:
+
+```java
+    jambel.red().setMode(Jambel.LightStatus.BLINK);
+    jambel.yellow().setMode(Jambel.LightStatus.ON);
+    jambel.green().setMode(Jambel.LightStatus.FLASH);
+```
+
+And finally there is a method to atomically set all three lights
+within a single network call:
+
+```java
+    final Jambel.LightStatus redMode = Jambel.LightStatus.BLINK;
+    final Jambel.LightStatus yellowMode = Jambel.LightStatus.ON;
+    final Jambel.LightStatus greenMode = Jambel.LightStatus.FLASH;
+
+    jambel.setAllLights(redMode, yellowMode, greenMode);
 ```
 
 ## Housekeeping and diagnostic operations
@@ -149,7 +175,8 @@ it is possible to fetch the current status of the three lights.
 ## Usage via command pattern
 
 The library provides a possibility to read jambel commands encoded as
-strings. These strings are then 'compiled' to instances of this interface
+strings. These strings are then 'compiled' to instances of the interface
+`JambelCommand`:
 
 ```java
 public interface JambelCommand {
@@ -169,10 +196,29 @@ For compiling jambel command strings see
             Jambel jambel, String command);
 ```
 
+A detailed description of the available commands is contained in the
+javadoc of the above mentioned method. Here are some examples to get a
+quick overview:
+
+```
+   "reset"
+   "test_connection"
+   "set_blink_times 400 400"
+   "red on"
+   "red blink"
+   "green on_for 2000"
+   "green blink_inverse"
+   "yellow flash"
+   "yellow off"
+   "yellow set_on_off_times 300 200"
+   "set_ryg flash blink on"
+   "set_ryg blink_inverse off on"
+```
+
 ## Error handling
 
 Accessing a network attached device can cause several problems.
-In case one of the above-mentioned methods fail it will throw a
+In case one of the above-mentioned methods fails, it will throw a
 `JambelException`. Possible error sources are:
  * network failure (host not found, connection refused, ...)
  * unexpected response
