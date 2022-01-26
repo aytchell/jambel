@@ -71,6 +71,27 @@ class RawJambelTest {
     }
 
     @Test
+    void turnGreen30MSecOn() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=3,30");
+
+        fixture.green().on(30);
+    }
+
+    @Test
+    void turnYellow60MSecOn() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=2,60");
+
+        fixture.yellow().on(60);
+    }
+
+    @Test
+    void turnRed90MSecOn() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,90");
+
+        fixture.red().on(90);
+    }
+
+    @Test
     void turnRedOff() throws JambelException {
         Mockito.doReturn("OK").when(mockedLink).sendCommand("set=1,off");
 

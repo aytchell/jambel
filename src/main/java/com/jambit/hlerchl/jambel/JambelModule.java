@@ -12,11 +12,23 @@ public interface JambelModule {
      * Turns the light on.
      * <p>
      * @see Jambel#status()
+     * @see Jambel#on(int)
      * @see Jambel.LightStatus#ON
      * @throws JambelException thrown in case the jambel couldn't be reached
      *      or behaved unexpectedly
      */
     void on() throws JambelException;
+
+    /**
+     * Turns the light for x milliseconds on (and then off again).
+     * <p>
+     * @see Jambel#status()
+     * @see Jambel#on()
+     * @see Jambel.LightStatus#ON
+     * @throws JambelException thrown in case the jambel couldn't be reached
+     *      or behaved unexpectedly
+     */
+    void on(int milliSeconds) throws JambelException;
 
     /**
      * Turns the light off.

@@ -155,6 +155,12 @@ public class RawJambel implements Jambel {
         }
 
         @Override
+        public void on(int milliSeconds) throws JambelException {
+            sendOkCommand("set=" + moduleId + "," + milliSeconds);
+        }
+
+
+        @Override
         public void off() throws JambelException {
             sendOkCommand("set=" + moduleId + ",off");
         }
