@@ -6,7 +6,7 @@
 
     <groupId>com.jambit.hlerchl</groupId>
     <artifactId>jambel</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
 
     <name>jambel remote control</name>
     <description>
@@ -38,7 +38,7 @@
         <connection>scm:git:git://bitbucket.jambit.com:7999/~hlerchl/jambel.git</connection>
         <developerConnection>scm:git:git://bitbucket.jambit.com:7999/~hlerchl/jambel.git</developerConnection>
         <url>http://bitbucket.jambit.com/users/hlerchl/jambel</url>
-        <tag>releases/1.2.2</tag>
+        <tag>releases/1.3.0</tag>
     </scm>
 
     <distributionManagement>
