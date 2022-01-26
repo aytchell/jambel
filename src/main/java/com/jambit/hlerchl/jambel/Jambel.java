@@ -121,6 +121,23 @@ public interface Jambel {
     JambelModule red();
 
     /**
+     * Set all three lights atomically with a single call.
+     * <p>
+     * This method sends out a single command to the jambel with requests
+     * for setting each of the three lights to a given mode.
+     * The result is the same as setting each light individually. The
+     * difference is that this method only takes a single network call.
+     *
+     * @param red the new light mode for red
+     * @param yellow the new light mode for yellow
+     * @param green the new light mode for green
+     * @throws JambelException thrown in case the jambel couldn't be reached
+     *      or behaved unexpectedly
+     */
+    void setAllLights(LightStatus red, LightStatus yellow, LightStatus green)
+        throws JambelException;
+
+    /**
      * A pojo which contains the current status of the three lights
      */
     @Value

@@ -7,8 +7,7 @@ import com.jambit.hlerchl.jambel.exceptions.JambelResponseException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class RawJambel implements Jambel {
@@ -91,6 +90,18 @@ public class RawJambel implements Jambel {
         }
     }
 
+    private int getStatusId(LightStatus status) throws Exception {
+        switch (status) {
+            case OFF: return 0;
+            case ON: return 1;
+            case BLINK: return 2;
+            case FLASH: return 3;
+            case BLINK_INVERSE: return 4;
+            default:
+                throw new Exception("Unknown status identifier");
+        }
+    }
+
     private int extractModuleStatus(int moduleId, String statusResponse) {
         final String messageStart = "status=";
         final String statusFormat = "x,";
@@ -118,6 +129,22 @@ public class RawJambel implements Jambel {
     @Override
     public JambelModule red() {
         return redModule;
+    }
+
+    @Override
+    public void setAllLights(LightStatus redStatus, LightStatus yellowStatus,
+                             LightStatus greenStatus) throws JambelException {
+        try {
+            Map<Integer, Integer> lightCodes = new HashMap<>(3);
+            lightCodes.put(redModule.moduleId, getStatusId(redStatus));
+            lightCodes.put(yellowModule.moduleId, getStatusId(yellowStatus));
+            lightCodes.put(greenModule.moduleId, getStatusId(greenStatus));
+            final String command = "set_all=" +
+                lightCodes.get(1) + "," + lightCodes.get(2) + "," + lightCodes.get(3);
+            sendOkCommand(command);
+        } catch (Exception e) {
+            throw new JambelException(e.getMessage());
+        }
     }
 
     private synchronized String sendCommandExpectResponse(String command) throws JambelException {

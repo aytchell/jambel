@@ -121,6 +121,32 @@ class RawJambelTest {
     }
 
     @Test
+    void setAllLightsBlinkOnOff() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=2,1,0");
+
+        fixture.setAllLights(Jambel.LightStatus.BLINK, Jambel.LightStatus.ON,
+            Jambel.LightStatus.OFF);
+    }
+
+    @Test
+    void setAllLightsFlashBlinkInverseOn() throws JambelException {
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=3,4,1");
+
+        fixture.setAllLights(Jambel.LightStatus.FLASH, Jambel.LightStatus.BLINK_INVERSE,
+            Jambel.LightStatus.ON);
+    }
+
+    @Test
+    void setAllLightsOnFlashBlinkForInverseModules() throws JambelException {
+        final Jambel inverseFixture = new RawJambel(mockedLink,
+            3, 2, 1);
+        Mockito.doReturn("OK").when(mockedLink).sendCommand("set_all=2,3,1");
+
+        inverseFixture.setAllLights(Jambel.LightStatus.ON, Jambel.LightStatus.FLASH,
+            Jambel.LightStatus.BLINK);
+    }
+
+    @Test
     void setBlinkTimersForSingleModule() throws JambelException {
         Mockito.doReturn("OK").when(mockedLink).sendCommand("blink_time=1,800,400");
 
